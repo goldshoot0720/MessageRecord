@@ -1,0 +1,47 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="MessageRecord.Views.SettingsView">
+
+  <UserControl.Resources>
+    <DataTemplate x:Key="SettingRow">
+      <Border Classes="card" Padding="16,13" Margin="0,0,0,8">
+        <Grid ColumnDefinitions="*,Auto">
+          <StackPanel Grid.Column="0" Spacing="4" Margin="0,0,16,0">
+            <TextBlock Text="{Binding Title}" Classes="title" />
+            <TextBlock Text="{Binding Description}" Classes="mute" TextWrapping="Wrap" />
+          </StackPanel>
+          <ToggleButton Grid.Column="1" Classes="pill" VerticalAlignment="Center"
+                        IsChecked="{Binding IsOn}" />
+        </Grid>
+      </Border>
+    </DataTemplate>
+  </UserControl.Resources>
+
+  <Border Classes="panel page">
+    <Grid RowDefinitions="Auto,*">
+
+      <StackPanel Grid.Row="0" Margin="24,22,24,0" Spacing="5">
+        <TextBlock Text="設定" Classes="h1" />
+        <TextBlock Text="這一頁的開關只做介面示範，不會改變實際行為" Classes="sub" />
+      </StackPanel>
+
+      <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Disabled" Padding="24,20,16,20">
+        <StackPanel Spacing="18">
+
+          <StackPanel Spacing="10">
+            <TextBlock Text="一般" Classes="mute" />
+            <ItemsControl ItemsSource="{Binding General}"
+                          ItemTemplate="{StaticResource SettingRow}" />
+          </StackPanel>
+
+          <StackPanel Spacing="10">
+            <TextBlock Text="紀錄" Classes="mute" />
+            <ItemsControl ItemsSource="{Binding Records}"
+                          ItemTemplate="{StaticResource SettingRow}" />
+          </StackPanel>
+
+        </StackPanel>
+      </ScrollViewer>
+    </Grid>
+  </Border>
+</UserControl>

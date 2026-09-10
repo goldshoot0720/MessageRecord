@@ -1,0 +1,64 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ctl="clr-namespace:MessageRecord.Controls"
+             x:Class="MessageRecord.Views.AppListView">
+
+  <Border Classes="panel">
+    <Grid RowDefinitions="Auto,*">
+
+      <!-- ~~~~~~~~~~ 標題 + 排序 ~~~~~~~~~~ -->
+      <Grid Grid.Row="0" ColumnDefinitions="*,Auto" Margin="28,26,14,18">
+        <TextBlock Grid.Column="0" Classes="h2" Text="{Binding HeaderText}"
+                   VerticalAlignment="Center" />
+        <Button Grid.Column="1" Classes="ghost" Command="{Binding CycleSortCommand}"
+                ToolTip.Tip="切換排序方式">
+          <StackPanel Orientation="Horizontal" Spacing="8">
+            <TextBlock Text="{Binding SortLabel}" VerticalAlignment="Center" />
+            <Path Classes="icon" Data="{StaticResource IconSort}" VerticalAlignment="Center" />
+          </StackPanel>
+        </Button>
+      </Grid>
+
+      <!-- ~~~~~~~~~~ 程式清單 ~~~~~~~~~~ -->
+      <Grid Grid.Row="1">
+        <ScrollViewer HorizontalScrollBarVisibility="Disabled" Padding="10,0,4,10">
+          <ListBox Classes="apps"
+                   ItemsSource="{Binding Apps}"
+                   SelectedItem="{Binding Selected}"
+                   ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+            <ListBox.ItemTemplate>
+              <DataTemplate>
+                <Border Classes="approw" Padding="18,13">
+                  <Grid ColumnDefinitions="Auto,*,Auto,Auto">
+
+                    <ctl:AppIcon Grid.Column="0" Width="54" Height="54" AppName="{Binding DisplayName}" />
+
+                    <StackPanel Grid.Column="1" Margin="26,0,6,0"
+                                VerticalAlignment="Center" Spacing="3">
+                      <TextBlock Text="{Binding DisplayName}" Classes="title"
+                                 TextTrimming="CharacterEllipsis" />
+                      <TextBlock Text="{Binding CountText}" Classes="mute" />
+                    </StackPanel>
+
+                    <ToggleButton Grid.Column="2" Classes="pill" VerticalAlignment="Center"
+                                  IsChecked="{Binding IsBlocking}"
+                                  AutomationProperties.Name="{Binding DisplayName}" ToolTip.Tip="對這個程式啟用 / 停用攔截" />
+
+                    <Path Grid.Column="3" Classes="chevron" Data="{StaticResource IconChevron}"
+                          VerticalAlignment="Center" Margin="20,0,2,0" />
+                  </Grid>
+                </Border>
+              </DataTemplate>
+            </ListBox.ItemTemplate>
+          </ListBox>
+        </ScrollViewer>
+
+        <StackPanel IsVisible="{Binding IsEmpty}" VerticalAlignment="Top"
+                    Margin="0,60,0,0" Spacing="8" HorizontalAlignment="Center">
+          <TextBlock Text="找不到符合的應用程式" Classes="sub" HorizontalAlignment="Center" />
+          <TextBlock Text="換個關鍵字試試" Classes="faint" HorizontalAlignment="Center" />
+        </StackPanel>
+      </Grid>
+    </Grid>
+  </Border>
+</UserControl>

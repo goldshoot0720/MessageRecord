@@ -1,0 +1,102 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ctl="clr-namespace:MessageRecord.Controls"
+             x:Class="MessageRecord.Views.AppDetailView">
+
+  <Border Classes="panel page">
+    <Grid RowDefinitions="Auto,Auto,*">
+
+      <!-- ~~~~~~~~~~ 程式標頭 ~~~~~~~~~~ -->
+      <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" Margin="28,25,22,0">
+
+        <ctl:AppIcon Grid.Column="0" Width="82" Height="82" AppName="{Binding App.DisplayName}" />
+
+        <StackPanel Grid.Column="1" Margin="30,0,16,0" VerticalAlignment="Center" Spacing="5">
+          <TextBlock Text="{Binding App.DisplayName}" Classes="h1"
+                     TextTrimming="CharacterEllipsis" />
+          <TextBlock Text="{Binding App.SummaryText}" Classes="sub" TextTrimming="CharacterEllipsis" />
+        </StackPanel>
+
+        <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="12"
+                    VerticalAlignment="Center">
+          <TextBlock Text="攔截通知" Classes="sub" VerticalAlignment="Center" />
+          <ToggleButton Classes="pill" VerticalAlignment="Center"
+                        IsChecked="{Binding App.IsBlocking}" AutomationProperties.Name="攔截通知" />
+        </StackPanel>
+      </Grid>
+
+      <!-- ~~~~~~~~~~ 分頁籤 + 排列 ~~~~~~~~~~ -->
+      <Grid Grid.Row="1" Margin="18,32,18,0">
+        <Grid ColumnDefinitions="*,Auto" VerticalAlignment="Bottom">
+          <ListBox Grid.Column="0" Classes="tabs" HorizontalAlignment="Left"
+                   ItemsSource="{Binding Tabs}"
+                   SelectedItem="{Binding SelectedTab}">
+            <ListBox.ItemTemplate>
+              <DataTemplate>
+                <TextBlock Text="{Binding Label}" />
+              </DataTemplate>
+            </ListBox.ItemTemplate>
+          </ListBox>
+
+          <Button Grid.Column="1" Classes="ghost boxed" Command="{Binding ToggleOrderCommand}"
+                  Padding="16,11" Margin="0,0,0,4" ToolTip.Tip="切換排列順序">
+            <StackPanel Orientation="Horizontal" Spacing="30">
+              <TextBlock Text="{Binding OrderLabel}" VerticalAlignment="Center" />
+              <Path Classes="icon" Data="{StaticResource IconCaret}" VerticalAlignment="Center" />
+            </StackPanel>
+          </Button>
+        </Grid>
+        <Rectangle Height="1" Fill="{StaticResource Line}" VerticalAlignment="Bottom" />
+      </Grid>
+
+      <!-- ~~~~~~~~~~ 紀錄清單 ~~~~~~~~~~ -->
+      <Grid Grid.Row="2">
+        <ScrollViewer HorizontalScrollBarVisibility="Disabled" Padding="18,18,10,18">
+          <ItemsControl ItemsSource="{Binding Records}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate>
+                <Border Classes="recrow" Padding="11,13" Margin="0,0,0,5">
+                  <Grid ColumnDefinitions="Auto,*,Auto,Auto,Auto">
+
+                    <Border Grid.Column="0" Width="52" Height="52" CornerRadius="12"
+                            Background="#263544">
+                      <Path Data="{Binding AvatarIcon}" Fill="#BED3EF" Width="26" Height="26" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+
+                    <StackPanel Grid.Column="1" Margin="20,0,10,0"
+                                VerticalAlignment="Center" Spacing="4">
+                      <TextBlock Text="{Binding Title}" Classes="title"
+                                 TextTrimming="CharacterEllipsis" />
+                      <TextBlock Text="{Binding Body}" Classes="mute"
+                                 TextTrimming="CharacterEllipsis" />
+                    </StackPanel>
+
+                    <TextBlock Grid.Column="2" Text="{Binding TimeText}" Classes="faint"
+                               VerticalAlignment="Top" Margin="0,4,14,0" />
+
+                    <Border Grid.Column="3" CornerRadius="10" Padding="10,6"
+                            VerticalAlignment="Center"
+                            Background="{Binding StatusBackground}" BorderBrush="{Binding StatusBorder}" BorderThickness="1">
+                      <TextBlock Text="{Binding StatusText}" FontSize="14"
+                                 Foreground="{Binding StatusForeground}" />
+                    </Border>
+
+                    <Button Grid.Column="4" Classes="dots" Content="⋮" Margin="6,0,0,0"
+                            VerticalAlignment="Center"
+                            Click="OnRecordMenu" ToolTip.Tip="通知詳情" AutomationProperties.Name="通知詳情" />
+                  </Grid>
+                </Border>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </ScrollViewer>
+
+        <StackPanel IsVisible="{Binding IsEmpty}" VerticalAlignment="Top"
+                    Margin="0,70,0,0" Spacing="8" HorizontalAlignment="Center">
+          <TextBlock Text="{Binding EmptyText}" Classes="sub" HorizontalAlignment="Center" />
+          <TextBlock Text="換一個分頁看看" Classes="faint" HorizontalAlignment="Center" />
+        </StackPanel>
+      </Grid>
+    </Grid>
+  </Border>
+</UserControl>

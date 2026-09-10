@@ -1,0 +1,45 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+  <!-- ============ 字型 ============ -->
+  <FontFamily x:Key="UiFont">Microsoft JhengHei UI, PingFang TC, Heiti TC, Noto Sans CJK TC, Noto Sans TC, Segoe UI, Helvetica Neue, Inter, sans-serif</FontFamily>
+
+  <!-- ============ 底色 ============ -->
+  <SolidColorBrush x:Key="Bg" Color="#FF080F17" />
+  <SolidColorBrush x:Key="Panel" Color="#FF0C151E" />
+  <SolidColorBrush x:Key="PanelHead" Color="#FF0C161F" />
+  <SolidColorBrush x:Key="RowBg" Color="#FF111D27" />
+  <SolidColorBrush x:Key="RowHover" Color="#FF182938" />
+  <SolidColorBrush x:Key="RowActive" Color="#FF162E43" />
+  <SolidColorBrush x:Key="Field" Color="#FF111E29" />
+
+  <!-- ============ 線條 ============ -->
+  <SolidColorBrush x:Key="Line" Color="#FF213240" />
+  <SolidColorBrush x:Key="LineSoft" Color="#FF1B2A36" />
+  <SolidColorBrush x:Key="LineBright" Color="#FF34516A" />
+
+  <!-- ============ 強調色 ============ -->
+  <SolidColorBrush x:Key="Accent" Color="#FF2196FF" />
+  <SolidColorBrush x:Key="AccentSoft" Color="#332B7FFF" />
+  <SolidColorBrush x:Key="AccentText" Color="#FF62BFFF" />
+  <SolidColorBrush x:Key="Green" Color="#FF34D399" />
+  <SolidColorBrush x:Key="GreenSoft" Color="#2634D399" />
+  <SolidColorBrush x:Key="GreenText" Color="#FF4ADE80" />
+  <SolidColorBrush x:Key="Danger" Color="#FFF87171" />
+
+  <!-- ============ 文字 ============ -->
+  <SolidColorBrush x:Key="Text" Color="#FFE8EEF7" />
+  <SolidColorBrush x:Key="TextDim" Color="#FFACBDD2" />
+  <SolidColorBrush x:Key="TextMute" Color="#FF99AFC5" />
+  <SolidColorBrush x:Key="TextFaint" Color="#FF8CA2BA" />
+
+  <!-- ============ 開關 ============ -->
+  <SolidColorBrush x:Key="ToggleTrackOff" Color="#FF233241" />
+
+  <!-- ============ 圖表 ============ -->
+  <LinearGradientBrush x:Key="SparkFill" StartPoint="0%,0%" EndPoint="0%,100%">
+    <GradientStop Offset="0" Color="#662B7FFF" />
+    <GradientStop Offset="1" Color="#002B7FFF" />
+  </LinearGradientBrush>
+
+</ResourceDictionary>

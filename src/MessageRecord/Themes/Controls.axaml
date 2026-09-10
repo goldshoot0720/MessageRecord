@@ -1,0 +1,405 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+  <!-- ================= 全域 ================= -->
+  <Style Selector="Window">
+    <Setter Property="FontFamily" Value="{StaticResource UiFont}" />
+    <Setter Property="Foreground" Value="{StaticResource Text}" />
+  </Style>
+
+  <!-- ================= 文字 ================= -->
+  <Style Selector="TextBlock.h1">
+    <Setter Property="FontSize" Value="30" />
+    <Setter Property="FontWeight" Value="SemiBold" />
+  </Style>
+
+  <Style Selector="TextBlock.h2">
+    <Setter Property="FontSize" Value="22" />
+    <Setter Property="FontWeight" Value="SemiBold" />
+  </Style>
+
+  <Style Selector="TextBlock.title">
+    <Setter Property="FontSize" Value="20" />
+    <Setter Property="FontWeight" Value="Normal" />
+  </Style>
+
+  <Style Selector="TextBlock.sub">
+    <Setter Property="FontSize" Value="16" />
+    <Setter Property="Foreground" Value="{StaticResource TextDim}" />
+  </Style>
+
+  <Style Selector="TextBlock.mute">
+    <Setter Property="FontSize" Value="16" />
+    <Setter Property="Foreground" Value="{StaticResource TextMute}" />
+  </Style>
+
+  <Style Selector="TextBlock.faint">
+    <Setter Property="FontSize" Value="14" />
+    <Setter Property="Foreground" Value="{StaticResource TextFaint}" />
+  </Style>
+
+  <Style Selector="TextBlock.bignum">
+    <Setter Property="FontSize" Value="30" />
+    <Setter Property="FontWeight" Value="Bold" />
+  </Style>
+
+  <!-- ================= 容器 ================= -->
+  <Style Selector="Border.panel">
+    <Setter Property="Background" Value="{StaticResource Panel}" />
+    <Setter Property="BorderBrush" Value="{StaticResource Line}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="CornerRadius" Value="14" />
+  </Style>
+
+  <Style Selector="Border.card">
+    <Setter Property="Background" Value="{StaticResource RowBg}" />
+    <Setter Property="BorderBrush" Value="{StaticResource LineSoft}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="CornerRadius" Value="12" />
+  </Style>
+
+  <Style Selector="Border.field">
+    <Setter Property="Background" Value="{StaticResource Field}" />
+    <Setter Property="BorderBrush" Value="{StaticResource Line}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="CornerRadius" Value="10" />
+  </Style>
+
+  <!-- ================= 圖示 ================= -->
+  <Style Selector="Path.icon">
+    <Setter Property="Stroke" Value="{StaticResource TextMute}" />
+    <Setter Property="StrokeThickness" Value="1.6" />
+    <Setter Property="StrokeJoin" Value="Round" />
+    <Setter Property="StrokeLineCap" Value="Round" />
+    <Setter Property="Width" Value="20" />
+    <Setter Property="Height" Value="20" />
+    <Setter Property="Stretch" Value="Uniform" />
+  </Style>
+
+  <!-- ================= 輸入框 ================= -->
+  <Style Selector="TextBox.plain">
+    <Setter Property="Foreground" Value="{StaticResource Text}" />
+    <Setter Property="CaretBrush" Value="{StaticResource Accent}" />
+    <Setter Property="SelectionBrush" Value="{StaticResource AccentSoft}" />
+    <Setter Property="FontSize" Value="16" />
+    <Setter Property="MinHeight" Value="0" />
+    <Setter Property="Padding" Value="0" />
+    <Setter Property="VerticalContentAlignment" Value="Center" />
+  </Style>
+  <Style Selector="TextBox.plain /template/ Border#PART_BorderElement">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="BorderThickness" Value="0" />
+  </Style>
+
+  <!-- ================= 標題列按鈕 ================= -->
+  <Style Selector="Button.caption">
+    <Setter Property="Width" Value="52" />
+    <Setter Property="Height" Value="34" />
+    <Setter Property="Cursor" Value="Hand" />
+    <Setter Property="Template">
+      <ControlTemplate TargetType="Button">
+        <Border Name="bd" Background="Transparent" CornerRadius="8">
+          <ContentPresenter Content="{TemplateBinding Content}"
+                            HorizontalAlignment="Center" VerticalAlignment="Center" />
+        </Border>
+      </ControlTemplate>
+    </Setter>
+  </Style>
+  <Style Selector="Button.caption:pointerover /template/ Border#bd">
+    <Setter Property="Background" Value="{StaticResource RowHover}" />
+  </Style>
+  <Style Selector="Button.caption:pointerover Path.icon">
+    <Setter Property="Stroke" Value="{StaticResource Text}" />
+  </Style>
+  <Style Selector="Button.caption.close:pointerover /template/ Border#bd">
+    <Setter Property="Background" Value="#FFE0344F" />
+  </Style>
+  <Style Selector="Button.caption.close:pointerover Path.icon">
+    <Setter Property="Stroke" Value="White" />
+  </Style>
+
+  <!-- ================= 幽靈按鈕（排序 / 排列） ================= -->
+  <Style Selector="Button.ghost">
+    <Setter Property="Cursor" Value="Hand" />
+    <Setter Property="Padding" Value="10,6" />
+    <Setter Property="Foreground" Value="{StaticResource TextDim}" />
+    <Setter Property="FontSize" Value="16" />
+    <Setter Property="Template">
+      <ControlTemplate TargetType="Button">
+        <Border Name="bd" Background="Transparent" CornerRadius="9"
+                BorderBrush="Transparent" BorderThickness="1"
+                Padding="{TemplateBinding Padding}">
+          <ContentPresenter Content="{TemplateBinding Content}" VerticalAlignment="Center" />
+        </Border>
+      </ControlTemplate>
+    </Setter>
+  </Style>
+  <Style Selector="Button.ghost:pointerover /template/ Border#bd">
+    <Setter Property="Background" Value="{StaticResource RowHover}" />
+  </Style>
+  <Style Selector="Button.ghost:pointerover">
+    <Setter Property="Foreground" Value="{StaticResource Text}" />
+  </Style>
+
+  <Style Selector="Button.ghost.boxed /template/ Border#bd">
+    <Setter Property="Background" Value="{StaticResource Field}" />
+    <Setter Property="BorderBrush" Value="{StaticResource Line}" />
+  </Style>
+  <Style Selector="Button.ghost.boxed:pointerover /template/ Border#bd">
+    <Setter Property="Background" Value="{StaticResource RowHover}" />
+    <Setter Property="BorderBrush" Value="{StaticResource LineBright}" />
+  </Style>
+
+  <!-- 每列紀錄右側的「⋮」 -->
+  <Style Selector="Button.dots">
+    <Setter Property="Width" Value="28" />
+    <Setter Property="Height" Value="28" />
+    <Setter Property="Cursor" Value="Hand" />
+    <Setter Property="Foreground" Value="{StaticResource TextFaint}" />
+    <Setter Property="FontSize" Value="16" />
+    <Setter Property="Template">
+      <ControlTemplate TargetType="Button">
+        <Border Name="bd" Background="Transparent" CornerRadius="8">
+          <ContentPresenter Content="{TemplateBinding Content}"
+                            HorizontalAlignment="Center" VerticalAlignment="Center" />
+        </Border>
+      </ControlTemplate>
+    </Setter>
+  </Style>
+  <Style Selector="Button.dots:pointerover /template/ Border#bd">
+    <Setter Property="Background" Value="{StaticResource RowHover}" />
+  </Style>
+  <Style Selector="Button.dots:pointerover">
+    <Setter Property="Foreground" Value="{StaticResource Text}" />
+  </Style>
+
+  <!-- ================= 開關 ================= -->
+  <Style Selector="ToggleButton.pill">
+    <Setter Property="Width" Value="56" />
+    <Setter Property="Height" Value="34" />
+    <Setter Property="MinWidth" Value="56" />
+    <Setter Property="Padding" Value="0" />
+    <Setter Property="Cursor" Value="Hand" />
+    <Setter Property="Template">
+      <ControlTemplate TargetType="ToggleButton">
+        <Border Name="track" CornerRadius="17" Background="{StaticResource ToggleTrackOff}" BorderBrush="{StaticResource LineBright}" BorderThickness="1">
+          <Border.Transitions>
+            <Transitions>
+              <BrushTransition Property="Background" Duration="0:0:0.16" />
+            </Transitions>
+          </Border.Transitions>
+          <Ellipse Name="knob" Width="22" Height="22" Margin="5,0,0,0"
+                   HorizontalAlignment="Left" VerticalAlignment="Center">
+            <Ellipse.Transitions>
+              <Transitions>
+                <TransformOperationsTransition Property="RenderTransform"
+                                               Duration="0:0:0.16" Easing="CubicEaseOut" />
+              </Transitions>
+            </Ellipse.Transitions>
+          </Ellipse>
+        </Border>
+      </ControlTemplate>
+    </Setter>
+  </Style>
+  <Style Selector="ToggleButton.pill /template/ Ellipse#knob">
+    <Setter Property="Fill" Value="#FFD7E0EC" />
+    <Setter Property="RenderTransform" Value="none" />
+  </Style>
+  <Style Selector="ToggleButton.pill:checked /template/ Border#track">
+    <Setter Property="Background" Value="{StaticResource Accent}" />
+  </Style>
+  <Style Selector="ToggleButton.pill:checked /template/ Ellipse#knob">
+    <Setter Property="Fill" Value="White" />
+    <Setter Property="RenderTransform" Value="translateX(22px)" />
+  </Style>
+
+  <!-- ================= 側欄導覽 ================= -->
+  <Style Selector="ListBox.nav">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="Padding" Value="0" />
+  </Style>
+
+  <Style Selector="ListBox.nav ListBoxItem">
+    <Setter Property="Padding" Value="0" />
+    <Setter Property="Margin" Value="0,0,0,4" />
+    <Setter Property="MinHeight" Value="0" />
+    <Setter Property="Cursor" Value="Hand" />
+    <Setter Property="Template">
+      <ControlTemplate TargetType="ListBoxItem">
+        <Border Name="nav" Background="Transparent" CornerRadius="11" Padding="16,17" BorderBrush="Transparent" BorderThickness="1">
+          <Border.Transitions>
+            <Transitions>
+              <BrushTransition Property="Background" Duration="0:0:0.12" />
+            </Transitions>
+          </Border.Transitions>
+          <ContentPresenter Content="{TemplateBinding Content}"
+                            ContentTemplate="{TemplateBinding ContentTemplate}"
+                            HorizontalAlignment="Stretch" VerticalAlignment="Center" />
+        </Border>
+      </ControlTemplate>
+    </Setter>
+  </Style>
+  <Style Selector="ListBox.nav ListBoxItem:pointerover /template/ Border#nav">
+    <Setter Property="Background" Value="{StaticResource RowHover}" />
+  </Style>
+  <Style Selector="ListBox.nav ListBoxItem:selected /template/ Border#nav">
+    <Setter Property="Background" Value="{StaticResource AccentSoft}" />
+    <Setter Property="BorderBrush" Value="{StaticResource Accent}" />
+  </Style>
+  <Style Selector="ListBox.nav ListBoxItem:selected Path.icon">
+    <Setter Property="Stroke" Value="{StaticResource AccentText}" />
+  </Style>
+  <Style Selector="ListBox.nav ListBoxItem:selected TextBlock.navlabel">
+    <Setter Property="Foreground" Value="{StaticResource Text}" />
+    <Setter Property="FontWeight" Value="SemiBold" />
+  </Style>
+  <Style Selector="ListBox.nav ListBoxItem:selected TextBlock.navcount">
+    <Setter Property="Foreground" Value="{StaticResource AccentText}" />
+  </Style>
+
+  <Style Selector="TextBlock.navlabel">
+    <Setter Property="FontSize" Value="18" />
+    <Setter Property="Foreground" Value="{StaticResource TextDim}" />
+  </Style>
+  <Style Selector="TextBlock.navcount">
+    <Setter Property="FontSize" Value="16" />
+    <Setter Property="Foreground" Value="{StaticResource TextMute}" />
+  </Style>
+
+  <!-- ================= 程式清單 ================= -->
+  <Style Selector="ListBox.apps">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="Padding" Value="0" />
+  </Style>
+
+  <Style Selector="ListBox.apps ListBoxItem">
+    <Setter Property="Padding" Value="0" />
+    <Setter Property="Margin" Value="0,0,0,2" />
+    <Setter Property="MinHeight" Value="0" />
+    <Setter Property="Cursor" Value="Hand" />
+    <Setter Property="Template">
+      <ControlTemplate TargetType="ListBoxItem">
+        <ContentPresenter Content="{TemplateBinding Content}"
+                          ContentTemplate="{TemplateBinding ContentTemplate}"
+                          HorizontalAlignment="Stretch" />
+      </ControlTemplate>
+    </Setter>
+  </Style>
+
+  <Style Selector="Border.approw">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="BorderBrush" Value="Transparent" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="CornerRadius" Value="12" />
+    <Setter Property="Transitions">
+      <Transitions>
+        <BrushTransition Property="Background" Duration="0:0:0.12" />
+        <BrushTransition Property="BorderBrush" Duration="0:0:0.12" />
+      </Transitions>
+    </Setter>
+  </Style>
+  <Style Selector="Button.caption Path.icon">
+    <Setter Property="Stretch" Value="None" />
+  </Style>
+  <Style Selector="ListBoxItem:not(:selected) Border.approw">
+    <Setter Property="BorderBrush" Value="{StaticResource LineSoft}" />
+    <Setter Property="BorderThickness" Value="0,0,0,1" />
+    <Setter Property="CornerRadius" Value="0" />
+  </Style>
+  <Style Selector="ListBoxItem:pointerover Border.approw">
+    <Setter Property="Background" Value="{StaticResource RowHover}" />
+  </Style>
+  <Style Selector="ListBoxItem:selected Border.approw">
+    <Setter Property="Background" Value="{StaticResource RowActive}" />
+    <Setter Property="BorderBrush" Value="{StaticResource Accent}" />
+  </Style>
+  <Style Selector="ListBoxItem:selected Path.chevron">
+    <Setter Property="Stroke" Value="{StaticResource AccentText}" />
+  </Style>
+
+  <Style Selector="Path.chevron">
+    <Setter Property="Stroke" Value="{StaticResource TextFaint}" />
+    <Setter Property="StrokeThickness" Value="1.8" />
+    <Setter Property="StrokeJoin" Value="Round" />
+    <Setter Property="StrokeLineCap" Value="Round" />
+    <Setter Property="Width" Value="20" />
+    <Setter Property="Height" Value="20" />
+    <Setter Property="Stretch" Value="None" />
+  </Style>
+
+  <!-- ================= 分頁籤 ================= -->
+  <Style Selector="ListBox.tabs">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="Padding" Value="0" />
+    <Setter Property="ItemsPanel">
+      <ItemsPanelTemplate>
+        <StackPanel Orientation="Horizontal" Spacing="6" />
+      </ItemsPanelTemplate>
+    </Setter>
+  </Style>
+
+  <Style Selector="ListBox.tabs ListBoxItem">
+    <Setter Property="MinHeight" Value="0" />
+    <Setter Property="Cursor" Value="Hand" />
+    <Setter Property="FontSize" Value="16" />
+    <Setter Property="Foreground" Value="{StaticResource TextMute}" />
+    <Setter Property="Template">
+      <ControlTemplate TargetType="ListBoxItem">
+        <Border Name="tab" Background="Transparent" Padding="4,12,4,13"
+                BorderBrush="Transparent" BorderThickness="0,0,0,3">
+          <ContentPresenter Content="{TemplateBinding Content}"
+                            ContentTemplate="{TemplateBinding ContentTemplate}"
+                            HorizontalAlignment="Center" VerticalAlignment="Center"
+                            Margin="8,0" />
+        </Border>
+      </ControlTemplate>
+    </Setter>
+  </Style>
+  <Style Selector="ListBox.tabs ListBoxItem:pointerover">
+    <Setter Property="Foreground" Value="{StaticResource TextDim}" />
+  </Style>
+  <Style Selector="ListBox.tabs ListBoxItem:selected">
+    <Setter Property="Foreground" Value="{StaticResource AccentText}" />
+    <Setter Property="FontWeight" Value="SemiBold" />
+  </Style>
+  <Style Selector="ListBox.tabs ListBoxItem:selected /template/ Border#tab">
+    <Setter Property="BorderBrush" Value="{StaticResource Accent}" />
+  </Style>
+
+  <!-- ================= 紀錄列 ================= -->
+  <Style Selector="Border.recrow">
+    <Setter Property="Background" Value="{StaticResource RowBg}" />
+    <Setter Property="BorderBrush" Value="{StaticResource LineSoft}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="CornerRadius" Value="12" />
+    <Setter Property="Transitions">
+      <Transitions>
+        <BrushTransition Property="Background" Duration="0:0:0.12" />
+      </Transitions>
+    </Setter>
+  </Style>
+  <Style Selector="Border.recrow:pointerover">
+    <Setter Property="Background" Value="{StaticResource RowHover}" />
+  </Style>
+
+  <!-- ================= 捲軸 ================= -->
+  <Style Selector="ScrollBar:vertical">
+    <Setter Property="Background" Value="Transparent" />
+  </Style>
+
+  <Style Selector="Button:focus-visible /template/ Border#bd">
+    <Setter Property="BorderBrush" Value="{StaticResource AccentText}" />
+    <Setter Property="BorderThickness" Value="2" />
+  </Style>
+  <Style Selector="ToggleButton.pill:focus-visible /template/ Border#track">
+    <Setter Property="BorderBrush" Value="{StaticResource Text}" />
+    <Setter Property="BorderThickness" Value="2" />
+  </Style>
+  <Style Selector="ListBoxItem:focus-visible Border.approw">
+    <Setter Property="BorderBrush" Value="{StaticResource AccentText}" />
+  </Style>
+</Styles>
+

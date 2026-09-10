@@ -1,0 +1,105 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ctl="clr-namespace:MessageRecord.Controls"
+             x:Class="MessageRecord.Views.StatsView">
+
+  <Border Classes="panel page">
+    <Grid RowDefinitions="Auto,*">
+
+      <StackPanel Grid.Row="0" Margin="24,22,24,0" Spacing="5">
+        <TextBlock Text="統計" Classes="h1" />
+        <TextBlock Text="近 7 天的攔截狀況與各程式排行" Classes="sub" />
+      </StackPanel>
+
+      <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Disabled" Padding="24,20,16,20">
+        <StackPanel Spacing="16">
+
+          <!-- 三個數字 -->
+          <Grid ColumnDefinitions="*,*,*">
+            <Border Grid.Column="0" Classes="card" Padding="16,14" Margin="0,0,6,0">
+              <StackPanel Spacing="6">
+                <TextBlock Text="本週攔截" Classes="mute" />
+                <TextBlock Text="{Binding WeekTotalText}" Classes="bignum" FontSize="26" />
+              </StackPanel>
+            </Border>
+            <Border Grid.Column="1" Classes="card" Padding="16,14" Margin="6,0">
+              <StackPanel Spacing="6">
+                <TextBlock Text="單日最高" Classes="mute" />
+                <TextBlock Text="{Binding WeekPeakText}" Classes="bignum" FontSize="26"
+                           Foreground="{StaticResource AccentText}" />
+              </StackPanel>
+            </Border>
+            <Border Grid.Column="2" Classes="card" Padding="16,14" Margin="6,0,0,0">
+              <StackPanel Spacing="6">
+                <TextBlock Text="日平均" Classes="mute" />
+                <TextBlock Text="{Binding WeekAverageText}" Classes="bignum" FontSize="26"
+                           Foreground="{StaticResource Green}" />
+              </StackPanel>
+            </Border>
+          </Grid>
+
+          <!-- 趨勢 -->
+          <Border Classes="card" Padding="18,16">
+            <Grid RowDefinitions="Auto,140,Auto">
+              <TextBlock Grid.Row="0" Text="近 7 天攔截趨勢" Classes="title" Margin="0,0,0,10" />
+              <ctl:Sparkline Grid.Row="1"
+                             Points="{Binding WeekPoints}"
+                             Stroke="{StaticResource AccentText}"
+                             AreaFill="{StaticResource SparkFill}"
+                             StrokeThickness="2.4" />
+              <ItemsControl Grid.Row="2" ItemsSource="{Binding DayLabels}" Margin="0,8,0,0">
+                <ItemsControl.ItemsPanel>
+                  <ItemsPanelTemplate>
+                    <UniformGrid Columns="7" />
+                  </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate>
+                    <TextBlock Text="{Binding}" Classes="faint" FontSize="10.5"
+                               HorizontalAlignment="Center" />
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+            </Grid>
+          </Border>
+
+          <!-- 排行 -->
+          <Border Classes="card" Padding="18,16">
+            <StackPanel Spacing="12">
+              <TextBlock Text="通知最多的程式" Classes="title" />
+              <ItemsControl ItemsSource="{Binding TopApps}">
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate>
+                    <Grid ColumnDefinitions="Auto,130,*,78" Margin="0,0,0,11">
+                      <Border Grid.Column="0" Width="30" Height="30" CornerRadius="9"
+                              Background="{Binding Accent}">
+                        <TextBlock Text="{Binding Badge}" FontSize="14" FontWeight="Bold"
+                                   Foreground="White"
+                                   HorizontalAlignment="Center" VerticalAlignment="Center" />
+                      </Border>
+                      <TextBlock Grid.Column="1" Text="{Binding Name}" Classes="sub"
+                                 Margin="11,0,10,0" VerticalAlignment="Center"
+                                 TextTrimming="CharacterEllipsis" />
+                      <Rectangle Grid.Column="2" Height="8" RadiusX="4" RadiusY="4"
+                                 HorizontalAlignment="Left" VerticalAlignment="Center"
+                                 Margin="0,0,14,0" Width="{Binding BarWidth}"
+                                 Fill="{StaticResource Accent}" Opacity="0.85" />
+                      <StackPanel Grid.Column="3" VerticalAlignment="Center"
+                                  HorizontalAlignment="Right" Spacing="2">
+                        <TextBlock Text="{Binding CountText}" Classes="sub"
+                                   HorizontalAlignment="Right" />
+                        <TextBlock Text="{Binding BlockedText}" Classes="faint" FontSize="10.5"
+                                   HorizontalAlignment="Right" />
+                      </StackPanel>
+                    </Grid>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+            </StackPanel>
+          </Border>
+
+        </StackPanel>
+      </ScrollViewer>
+    </Grid>
+  </Border>
+</UserControl>
