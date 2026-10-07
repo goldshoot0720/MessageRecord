@@ -55,8 +55,8 @@
 
         <StackPanel IsVisible="{Binding IsEmpty}" VerticalAlignment="Top"
                     Margin="0,60,0,0" Spacing="8" HorizontalAlignment="Center">
-          <TextBlock Text="找不到符合的應用程式" Classes="sub" HorizontalAlignment="Center" />
-          <TextBlock Text="換個關鍵字試試" Classes="faint" HorizontalAlignment="Center" />
+          <TextBlock Text="{Binding EmptyTitle}" Classes="sub" HorizontalAlignment="Center" />
+          <TextBlock Text="{Binding EmptyHint}" Classes="faint" HorizontalAlignment="Center" />
         </StackPanel>
       </Grid>
     </Grid>

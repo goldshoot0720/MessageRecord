@@ -4,7 +4,7 @@
         xmlns:views="clr-namespace:MessageRecord.Views"
         xmlns:ctl="clr-namespace:MessageRecord.Controls"
         x:Class="MessageRecord.Views.MainWindow"
-        Title="NotifBlock · 通知訊息攔截紀錄"
+        Title="MessageRecord · 通知訊息攔截紀錄"
         Width="1536" Height="1024"
         MinWidth="1280" MinHeight="760"
         WindowStartupLocation="CenterScreen"
@@ -34,9 +34,9 @@
 
       <StackPanel Grid.Column="0" Name="BrandBlock" Orientation="Horizontal" Spacing="20"
                   VerticalAlignment="Center" Margin="20,0,0,0">
-        <ctl:AppIcon AppName="NotifBlock" Width="50" Height="50" />
+        <ctl:AppIcon AppName="MessageRecord" Width="50" Height="50" />
         <StackPanel VerticalAlignment="Center" Spacing="2">
-          <TextBlock Text="NotifBlock" FontSize="25" FontWeight="Bold" />
+          <TextBlock Text="MessageRecord" FontSize="22" FontWeight="Bold" />
           <TextBlock Text="清爽的通知，由你掌控" Classes="faint" />
         </StackPanel>
       </StackPanel>
@@ -47,7 +47,7 @@
           <Path Grid.Column="0" Classes="icon" Data="{StaticResource IconSearch}"
                 VerticalAlignment="Center" />
           <TextBox Grid.Column="1" Classes="plain" Margin="10,0,0,0"
-                   Watermark="搜尋應用程式..." Text="{Binding SearchText}" />
+                   Watermark="搜尋應用程式或通知..." Text="{Binding SearchText}" />
         </Grid>
       </Border>
 

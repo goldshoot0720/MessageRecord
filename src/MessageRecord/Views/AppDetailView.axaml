@@ -19,6 +19,9 @@
 
         <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="12"
                     VerticalAlignment="Center">
+          <Button Classes="ghost boxed" Content="匯出" Padding="14,8"
+                  IsVisible="{Binding CanExport}" Click="OnExport"
+                  ToolTip.Tip="把這個程式的紀錄匯出成 JSON" />
           <TextBlock Text="攔截通知" Classes="sub" VerticalAlignment="Center" />
           <ToggleButton Classes="pill" VerticalAlignment="Center"
                         IsChecked="{Binding App.IsBlocking}" AutomationProperties.Name="攔截通知" />

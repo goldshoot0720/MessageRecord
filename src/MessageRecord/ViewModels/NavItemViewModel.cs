@@ -7,12 +7,14 @@ namespace MessageRecord.ViewModels;
 /// <summary>側欄的一列導覽項目。</summary>
 public sealed class NavItemViewModel : ObservableObject
 {
+    private int? _count;
+
     public NavItemViewModel(string key, string label, string iconKey, int? count = null)
     {
         Key = key;
         Label = label;
         Icon = FindIcon(iconKey);
-        Count = count;
+        _count = count;
     }
 
     public string Key { get; }
@@ -21,11 +23,20 @@ public sealed class NavItemViewModel : ObservableObject
 
     public Geometry? Icon { get; }
 
-    public int? Count { get; }
+    public int? Count => _count;
 
-    public bool HasCount => Count.HasValue;
+    public bool HasCount => _count.HasValue;
 
-    public string CountText => Count?.ToString("N0") ?? "";
+    public string CountText => _count?.ToString("N0") ?? "";
+
+    public void SetCount(int count)
+    {
+        if (_count == count) return;
+        _count = count;
+        OnPropertyChanged(nameof(Count));
+        OnPropertyChanged(nameof(CountText));
+        OnPropertyChanged(nameof(HasCount));
+    }
 
     private static Geometry? FindIcon(string key)
     {

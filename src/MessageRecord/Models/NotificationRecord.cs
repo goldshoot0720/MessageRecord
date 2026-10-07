@@ -18,4 +18,15 @@ public sealed class NotificationRecord
 
     /// <summary>true = 已攔截（沒有跳出來），false = 已允許。</summary>
     public bool Blocked { get; init; }
+
+    /// <summary>跨平台去重鍵。示範資料可以留空。</summary>
+    public string Uid { get; init; } = "";
+
+    public string Category { get; init; } = "";
+
+    public string Source { get; init; } = "";
+
+    public bool Ongoing { get; init; }
+
+    public DateTime? RemovedAt { get; init; }
 }

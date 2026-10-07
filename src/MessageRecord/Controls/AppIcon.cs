@@ -81,6 +81,7 @@ public sealed class AppIcon : Control
                 context.DrawRectangle(Brush.Parse("#454FD3"), null, new Rect(1, 21, 33, 33), 4, 4);
                 Shape("M9 30 L26 30 M17 30 L17 46", "White", 4); break;
             case "NotifBlock":
+            case "MessageRecord":
                 Shape("M32 3 Q20 10 9 8 Q6 8 6 14 L6 42 Q7 52 32 61 Q57 52 58 42 L58 14 Q58 8 55 8 Q44 10 32 3 Z", "#082943");
                 Shape("M32 3 Q20 10 9 8 Q6 8 6 14 L6 42 Q7 52 32 61 Q57 52 58 42 L58 14 Q58 8 55 8 Q44 10 32 3 Z", "#1698FF", 2);
                 Shape("M32 17 Q21 17 21 30 L17 42 L47 42 L43 30 Q43 17 32 17 Z", "#36AEFF"); Circle(32, 46, 4, "#90D7FF"); break;

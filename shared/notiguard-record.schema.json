@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://notiguard.app/schema/record-1.json",
+  "title": "NotiGuard notification record",
+  "description": "跨平台同步的單筆通知紀錄。Android 匯出、桌面版匯入與匯出共用此格式。桌面端多了 desktop_listener 與 desktop_history。",
+  "type": "object",
+  "required": ["uid", "packageName", "appLabel", "postedAt", "blocked", "source"],
+  "properties": {
+    "uid": { "type": "string" },
+    "packageName": { "type": "string" },
+    "appLabel": { "type": "string" },
+    "title": { "type": "string" },
+    "text": { "type": "string" },
+    "channelId": { "type": ["string", "null"] },
+    "category": { "type": ["string", "null"] },
+    "postedAt": { "type": "integer" },
+    "removedAt": { "type": ["integer", "null"] },
+    "blocked": { "type": "boolean" },
+    "ongoing": { "type": "boolean", "default": false },
+    "source": {
+      "type": "string",
+      "enum": [
+        "android_listener",
+        "ios_service_extension",
+        "ios_delivered",
+        "companion_sync",
+        "seed",
+        "desktop_listener",
+        "desktop_history"
+      ]
+    },
+    "deviceId": { "type": ["string", "null"] }
+  },
+  "additionalProperties": false
+}

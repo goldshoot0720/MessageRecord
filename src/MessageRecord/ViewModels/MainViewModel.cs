@@ -1,78 +1,68 @@
 using System.ComponentModel;
 using System.Windows.Input;
-using MessageRecord.Core;
+using Avalonia.Threading;
 using MessageRecord.Capture;
+using MessageRecord.Core;
+using MessageRecord.Data;
+using MessageRecord.Models;
 
 namespace MessageRecord.ViewModels;
 
 /// <summary>外框：頂列搜尋、側欄導覽與統計卡，以及右欄要顯示哪一頁。</summary>
 public sealed class MainViewModel : ObservableObject
 {
-    private readonly List<AppChannelViewModel> _apps;
-    private readonly StatsViewModel _stats;
+    private readonly AppSession? _session;
+    private readonly List<NavItemViewModel> _navItems;
+    private List<AppChannelViewModel> _apps;
+    private StatsViewModel _stats = null!;
     private readonly SettingsViewModel _settings;
 
     private object? _currentPane;
     private AppDetailViewModel? _detail;
     private NavItemViewModel _selectedNav;
     private string _searchText = "";
+    private bool _newestFirst = true;
+    private int _reloadQueued;
 
     public MainViewModel()
     {
         Source = NotificationSourceFactory.Create();
-
-        _apps = Source.Load()
-            .Select(a => new AppChannelViewModel(a))
-            .ToList();
-
-        TotalRecords = _apps.Sum(a => a.Count);
-        BlockedRecords = _apps.Sum(a => a.BlockedCount);
-        AllowedRecords = _apps.Sum(a => a.AllowedCount);
-
-        NavItems = new List<NavItemViewModel>
-        {
-            new("apps", "應用程式", "IconHome", _apps.Count),
-            new("all", "全部記錄", "IconList", TotalRecords),
-            new("blocked", "已攔截", "IconCheck", BlockedRecords),
-            new("allowed", "已允許", "IconCheck", AllowedRecords)
-        };
-
-        ToolItems = new List<NavItemViewModel>
-        {
-            new("stats", "統計", "IconChart"),
-            new("settings", "設定", "IconGear")
-        };
-
-        _selectedNav = NavItems[0];
-
-        AppList = new AppListViewModel(_apps);
-        AppList.PropertyChanged += OnAppListChanged;
-
-        _stats = new StatsViewModel(_apps);
+        _apps = Source.Load().Select(app => new AppChannelViewModel(app)).ToList();
+        _navItems = CreateNav(_apps);
+        _selectedNav = _navItems[0];
         _settings = new SettingsViewModel();
-
-        OpenSettingsCommand = new RelayCommand(() => SelectedNav = ToolItems[1]);
-
-        BuildTodayStats();
-        BuildDetail("all");
+        InitializeChrome();
     }
 
-    /// <summary>目前使用的通知來源（本版本是示範資料）。</summary>
+    public MainViewModel(AppSession session)
+    {
+        _session = session;
+        session.Changed += ScheduleReload;
+        session.StatusChanged += ScheduleStatus;
+        Source = new SampleNotificationSource();
+        _apps = Map(session.LoadChannels());
+        _navItems = CreateNav(_apps);
+        _selectedNav = _navItems[0];
+        _settings = new SettingsViewModel(session);
+        InitializeChrome();
+    }
+
+    /// <summary>設計預覽用的通知來源。即時模式的資料來自 <see cref="AppSession"/>。</summary>
     public INotificationSource Source { get; }
 
-    public AppListViewModel AppList { get; }
+    public AppListViewModel AppList { get; private set; } = null!;
 
-    public ICommand OpenSettingsCommand { get; }
+    public ICommand OpenSettingsCommand { get; private set; } = null!;
 
-    public IReadOnlyList<NavItemViewModel> NavItems { get; }
+    public IReadOnlyList<NavItemViewModel> NavItems => _navItems;
 
-    public IReadOnlyList<NavItemViewModel> ToolItems { get; }
+    public IReadOnlyList<NavItemViewModel> ToolItems { get; private set; } = Array.Empty<NavItemViewModel>();
 
-    public int TotalRecords { get; }
+    public int TotalRecords { get; private set; }
 
-    public int BlockedRecords { get; }
+    public int BlockedRecords { get; private set; }
 
-    public int AllowedRecords { get; }
+    public int AllowedRecords { get; private set; }
 
     public object? CurrentPane
     {
@@ -101,7 +91,7 @@ public sealed class MainViewModel : ObservableObject
 
     public NavItemViewModel? SelectedSection
     {
-        get => NavItems.Contains(_selectedNav) ? _selectedNav : null;
+        get => _navItems.Contains(_selectedNav) ? _selectedNav : null;
         set { if (value is not null) SelectedNav = value; }
     }
 
@@ -110,11 +100,12 @@ public sealed class MainViewModel : ObservableObject
         get => _searchText;
         set
         {
-            if (Set(ref _searchText, value)) AppList.SearchText = value;
+            if (!Set(ref _searchText, value)) return;
+            AppList.SearchText = value;
+            if (_selectedNav.Key is not ("stats" or "settings"))
+                BuildDetail(VisibleTab());
         }
     }
-
-    // ---------- 側欄統計卡 ----------
 
     public IReadOnlyList<double> TodayPoints { get; private set; } = Array.Empty<double>();
 
@@ -126,19 +117,112 @@ public sealed class MainViewModel : ObservableObject
 
     public IReadOnlyList<string> HourLabels { get; private set; } = new[] { "00", "06", "12", "18", "24" };
 
-    public string VersionText => "NotifBlock v1.0";
+    public string VersionText => _session is null ? "NotifBlock v1.0" : "MessageRecord 1.1.0";
 
-    public string TaglineText => "簡單・專注・不打擾";
+    public string TaglineText => _session?.ShortStatus ?? "簡單・專注・不打擾";
 
-    public string SourceText => $"{NotificationSourceFactory.PlatformName} · {Source.Name}";
+    private void InitializeChrome()
+    {
+        ToolItems = new List<NavItemViewModel>
+        {
+            new("stats", "統計", "IconChart"),
+            new("settings", "設定", "IconGear")
+        };
+
+        AppList = new AppListViewModel(
+            _apps,
+            _session is null ? null : "還沒有通知紀錄",
+            _session is null ? null : "授權讀取通知中心，或從設定匯入 JSON");
+        AppList.PropertyChanged += OnAppListChanged;
+        _stats = new StatsViewModel(_apps);
+        OpenSettingsCommand = new RelayCommand(() => SelectedNav = ToolItems[1]);
+        PublishCounts();
+        BuildTodayStats();
+        BuildDetail("all");
+    }
+
+    private static List<NavItemViewModel> CreateNav(List<AppChannelViewModel> apps)
+    {
+        var total = apps.Sum(app => app.Count);
+        var blocked = apps.Sum(app => app.BlockedCount);
+        var allowed = apps.Sum(app => app.AllowedCount);
+        return new List<NavItemViewModel>
+        {
+            new("apps", "應用程式", "IconHome", apps.Count),
+            new("all", "全部記錄", "IconList", total),
+            new("blocked", "已攔截", "IconCheck", blocked),
+            new("allowed", "已允許", "IconCheck", allowed)
+        };
+    }
+
+    private List<AppChannelViewModel> Map(IEnumerable<AppChannel> channels)
+    {
+        var apps = channels.Select(channel => new AppChannelViewModel(channel)).ToList();
+        if (_session is null) return apps;
+        foreach (var app in apps)
+        {
+            var current = app;
+            current.BlockingChanged = blocking => _session.SetBlocking(current.Key, current.DisplayName, blocking);
+        }
+
+        return apps;
+    }
+
+    private void ScheduleReload()
+    {
+        if (Interlocked.Exchange(ref _reloadQueued, 1) == 1) return;
+        Dispatcher.UIThread.Post(Reload);
+    }
+
+    private void ScheduleStatus()
+    {
+        Dispatcher.UIThread.Post(() =>
+        {
+            OnPropertyChanged(nameof(TaglineText));
+            _settings.RefreshStatus();
+        });
+    }
+
+    private void Reload()
+    {
+        if (_session is null)
+        {
+            Interlocked.Exchange(ref _reloadQueued, 0);
+            return;
+        }
+
+        var selectedKey = AppList.Selected?.Key;
+        var tab = VisibleTab();
+        _apps = Map(_session.LoadChannels());
+        AppList.Reset(_apps, selectedKey);
+        PublishCounts();
+        _stats = new StatsViewModel(_apps);
+        BuildTodayStats();
+        ApplyNav(tab);
+        Interlocked.Exchange(ref _reloadQueued, 0);
+    }
+
+    private void PublishCounts()
+    {
+        TotalRecords = _apps.Sum(app => app.Count);
+        BlockedRecords = _apps.Sum(app => app.BlockedCount);
+        AllowedRecords = TotalRecords - BlockedRecords;
+        _navItems[0].SetCount(_apps.Count);
+        _navItems[1].SetCount(TotalRecords);
+        _navItems[2].SetCount(BlockedRecords);
+        _navItems[3].SetCount(AllowedRecords);
+    }
 
     private void OnAppListChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName == nameof(AppListViewModel.Selected))
-            BuildDetail(_detail?.SelectedTab.Key ?? "all");
+        if (e.PropertyName != nameof(AppListViewModel.Selected)) return;
+        if (_selectedNav.Key is "stats" or "settings") return;
+        BuildDetail(VisibleTab());
     }
 
-    private void ApplyNav()
+    private string VisibleTab() => _detail?.SelectedTab.Key ?? "all";
+
+    private void ApplyNav(string? tab = null)
     {
         switch (_selectedNav.Key)
         {
@@ -154,13 +238,14 @@ public sealed class MainViewModel : ObservableObject
                 BuildDetail(_selectedNav.Key);
                 break;
             default:
-                BuildDetail(_detail?.SelectedTab.Key ?? "all");
+                BuildDetail(tab ?? VisibleTab());
                 break;
         }
     }
 
     private void BuildDetail(string tab)
     {
+        if (_detail is not null) _newestFirst = _detail.NewestFirst;
         _detail?.Detach();
 
         var app = AppList.Selected;
@@ -171,7 +256,15 @@ public sealed class MainViewModel : ObservableObject
             return;
         }
 
-        _detail = new AppDetailViewModel(app, tab);
+        var keyword = _searchText.Trim();
+        var nameMatch = keyword.Length == 0
+            || app.DisplayName.Contains(keyword, StringComparison.OrdinalIgnoreCase)
+            || app.Key.Contains(keyword, StringComparison.OrdinalIgnoreCase);
+        _detail = new AppDetailViewModel(app, tab, nameMatch ? "" : keyword, _newestFirst)
+        {
+            ExportFactory = _session is null ? null : () => (_session.ExportFileName(app.DisplayName), _session.ExportJson(app.Key)),
+            ForgetApp = _session is null ? null : () => _session.Forget(app.Key)
+        };
         CurrentPane = _detail;
     }
 
@@ -184,33 +277,30 @@ public sealed class MainViewModel : ObservableObject
 
         foreach (var app in _apps)
         {
-            foreach (var r in app.Records)
+            foreach (var record in app.Records)
             {
-                if (!r.Blocked) continue;
+                if (!record.Blocked) continue;
 
-                if (r.ArrivalTime.Date == today)
+                if (record.ArrivalTime.Date == today)
                 {
                     todayBlocked++;
-                    hourly[Math.Clamp(r.ArrivalTime.Hour, 0, 24)]++;
+                    hourly[Math.Clamp(record.ArrivalTime.Hour, 0, 24)]++;
                 }
-                else if (r.ArrivalTime.Date == today.AddDays(-1))
+                else if (record.ArrivalTime.Date == today.AddDays(-1))
                 {
                     yesterdayBlocked++;
                 }
             }
         }
 
-        // 只畫到目前這個小時，右半邊才不會是一條平線。
         var last = Math.Max(3, Math.Min(24, DateTime.Now.Hour + 1));
-
-        // 讓曲線有起伏又不失真：以實際小時分佈為底，做一次輕微平滑。
         var smoothed = new double[last + 1];
-        for (int i = 0; i < smoothed.Length; i++)
+        for (var i = 0; i < smoothed.Length; i++)
         {
-            var a = hourly[Math.Max(0, i - 1)];
-            var b = hourly[i];
-            var c = hourly[Math.Min(hourly.Length - 1, i + 1)];
-            smoothed[i] = (a + b * 2 + c) / 4 + 0.4;
+            var left = hourly[Math.Max(0, i - 1)];
+            var mid = hourly[i];
+            var right = hourly[Math.Min(hourly.Length - 1, i + 1)];
+            smoothed[i] = (left + mid * 2 + right) / 4 + 0.4;
         }
 
         TodayPoints = smoothed;
@@ -230,5 +320,11 @@ public sealed class MainViewModel : ObservableObject
             DeltaUp = delta >= 0;
             DeltaText = (DeltaUp ? "↑ " : "↓ ") + Math.Abs(Math.Round(delta)) + "%";
         }
+
+        OnPropertyChanged(nameof(TodayPoints));
+        OnPropertyChanged(nameof(HourLabels));
+        OnPropertyChanged(nameof(TodayBlockedText));
+        OnPropertyChanged(nameof(DeltaText));
+        OnPropertyChanged(nameof(DeltaUp));
     }
 }

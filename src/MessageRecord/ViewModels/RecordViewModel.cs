@@ -28,6 +28,10 @@ public sealed class RecordViewModel : ObservableObject
 
     public bool Blocked => _model.Blocked;
 
+    public string Category => _model.Category;
+
+    public DateTime? RemovedAt => _model.RemovedAt;
+
     public string StatusText => _model.Blocked ? "已攔截" : "已允許";
 
     public IBrush StatusForeground => _model.Blocked ? BlockedFg : AllowedFg;

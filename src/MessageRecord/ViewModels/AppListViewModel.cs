@@ -10,14 +10,20 @@ public sealed class AppListViewModel : ObservableObject
     private static readonly string[] SortLabels = { "按通知數量", "按最新時間", "按程式名稱" };
 
     private readonly List<AppChannelViewModel> _source;
+    private readonly string? _noDataTitle;
+    private readonly string? _noDataHint;
 
     private string _searchText = "";
     private int _sortIndex;
     private AppChannelViewModel? _selected;
+    private string _emptyTitle = "找不到符合的應用程式";
+    private string _emptyHint = "換個關鍵字試試";
 
-    public AppListViewModel(List<AppChannelViewModel> source)
+    public AppListViewModel(List<AppChannelViewModel> source, string? noDataTitle = null, string? noDataHint = null)
     {
         _source = source;
+        _noDataTitle = noDataTitle;
+        _noDataHint = noDataHint;
         CycleSortCommand = new RelayCommand(() => SortIndex = (SortIndex + 1) % SortLabels.Length);
         Apply();
         _selected = Apps.FirstOrDefault();
@@ -32,6 +38,10 @@ public sealed class AppListViewModel : ObservableObject
     public string SortLabel => SortLabels[_sortIndex];
 
     public bool IsEmpty => Apps.Count == 0;
+
+    public string EmptyTitle => _emptyTitle;
+
+    public string EmptyHint => _emptyHint;
 
     public string SearchText
     {
@@ -58,6 +68,16 @@ public sealed class AppListViewModel : ObservableObject
         set => Set(ref _selected, value);
     }
 
+    public void Reset(IEnumerable<AppChannelViewModel> source, string? selectedKey)
+    {
+        _source.Clear();
+        _source.AddRange(source);
+        Apply();
+        if (selectedKey is null) return;
+        var match = Apps.FirstOrDefault(app => app.Key == selectedKey);
+        if (match is not null) Selected = match;
+    }
+
     private void Apply()
     {
         IEnumerable<AppChannelViewModel> query = _source;
@@ -65,9 +85,12 @@ public sealed class AppListViewModel : ObservableObject
         var keyword = _searchText.Trim();
         if (keyword.Length > 0)
         {
-            query = query.Where(a =>
-                a.DisplayName.Contains(keyword, StringComparison.OrdinalIgnoreCase) ||
-                a.Key.Contains(keyword, StringComparison.OrdinalIgnoreCase));
+            query = query.Where(app =>
+                app.DisplayName.Contains(keyword, StringComparison.OrdinalIgnoreCase) ||
+                app.Key.Contains(keyword, StringComparison.OrdinalIgnoreCase) ||
+                app.Records.Any(record =>
+                    record.Title.Contains(keyword, StringComparison.OrdinalIgnoreCase) ||
+                    record.Body.Contains(keyword, StringComparison.OrdinalIgnoreCase)));
         }
 
         query = _sortIndex switch
@@ -83,7 +106,20 @@ public sealed class AppListViewModel : ObservableObject
         if (_selected is null || !Apps.Contains(_selected))
             Selected = Apps.FirstOrDefault();
 
+        if (Apps.Count == 0 && _source.Count == 0 && keyword.Length == 0 && _noDataTitle is not null)
+        {
+            _emptyTitle = _noDataTitle;
+            _emptyHint = _noDataHint ?? "";
+        }
+        else
+        {
+            _emptyTitle = "找不到符合的應用程式";
+            _emptyHint = "換個關鍵字試試";
+        }
+
         OnPropertyChanged(nameof(HeaderText));
         OnPropertyChanged(nameof(IsEmpty));
+        OnPropertyChanged(nameof(EmptyTitle));
+        OnPropertyChanged(nameof(EmptyHint));
     }
 }

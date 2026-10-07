@@ -16,8 +16,9 @@ public sealed class SampleNotificationSource : INotificationSource
 /// <summary>
 /// 依作業系統挑選通知來源。
 ///
-/// 本版本只負責介面設計，所以三個平台都回傳示範資料。
-/// 之後各平台的實作放進來後，只要在這裡排進優先順序即可：
+/// 設計預覽與 UiCheck 使用示範資料。
+/// 正式視窗改走 AppSession：各平台來源在 CaptureHost，寫入 SqliteRecordStore。
+///
 ///
 ///   Windows → 讀 %LOCALAPPDATA%\Microsoft\Windows\Notifications\wpndatabase.db（SQLite），
 ///             或封裝成 MSIX 後用 UserNotificationListener 收即時事件。

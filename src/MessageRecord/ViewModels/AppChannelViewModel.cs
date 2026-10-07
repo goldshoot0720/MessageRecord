@@ -56,6 +56,13 @@ public sealed class AppChannelViewModel : ObservableObject
     public bool IsBlocking
     {
         get => _isBlocking;
-        set => Set(ref _isBlocking, value);
+        set
+        {
+            if (!Set(ref _isBlocking, value)) return;
+            BlockingChanged?.Invoke(value);
+        }
     }
+
+    /// <summary>即時模式才會接上，把開關寫進資料庫。</summary>
+    public Action<bool>? BlockingChanged { get; set; }
 }

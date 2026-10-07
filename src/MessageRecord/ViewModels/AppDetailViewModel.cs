@@ -24,12 +24,15 @@ public sealed class RecordTab
 /// <summary>右欄：某個程式底下的所有攔截紀錄。</summary>
 public sealed class AppDetailViewModel : ObservableObject
 {
+    private readonly string _recordQuery;
     private RecordTab _selectedTab;
-    private bool _newestFirst = true;
+    private bool _newestFirst;
 
-    public AppDetailViewModel(AppChannelViewModel app, string initialTab = "all")
+    public AppDetailViewModel(AppChannelViewModel app, string initialTab = "all", string recordQuery = "", bool newestFirst = true)
     {
         App = app;
+        _recordQuery = recordQuery.Trim();
+        _newestFirst = newestFirst;
 
         Tabs = new ObservableCollection<RecordTab>
         {
@@ -53,6 +56,14 @@ public sealed class AppDetailViewModel : ObservableObject
     public ObservableCollection<RecordViewModel> Records { get; } = new();
 
     public ICommand ToggleOrderCommand { get; }
+
+    public Func<(string FileName, string Json)>? ExportFactory { get; init; }
+
+    public Action? ForgetApp { get; init; }
+
+    public bool CanExport => ExportFactory is not null;
+
+    public bool CanForget => ForgetApp is not null;
 
     public RecordTab SelectedTab
     {
@@ -107,6 +118,13 @@ public sealed class AppDetailViewModel : ObservableObject
             "allowed" => App.Records.Where(r => !r.Blocked),
             _ => App.Records
         };
+
+        if (_recordQuery.Length > 0)
+        {
+            query = query.Where(record =>
+                record.Title.Contains(_recordQuery, StringComparison.OrdinalIgnoreCase) ||
+                record.Body.Contains(_recordQuery, StringComparison.OrdinalIgnoreCase));
+        }
 
         query = _newestFirst
             ? query.OrderByDescending(r => r.ArrivalTime)
