@@ -32,6 +32,7 @@ publish_mac() {
   rm -rf "${app}"
   mkdir -p "${app}/Contents/MacOS" "${app}/Contents/Resources"
   cp packaging/macos/Info.plist "${app}/Contents/Info.plist"
+  cp packaging/macos/MessageRecord.icns "${app}/Contents/Resources/MessageRecord.icns"
   cp -R -X "${ROOT}/artifacts/publish/${rid}/." "${app}/Contents/MacOS/"
   chmod +x "${app}/Contents/MacOS/MessageRecord"
   codesign --force --deep --sign - "${app}"

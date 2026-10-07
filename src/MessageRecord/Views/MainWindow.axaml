@@ -4,6 +4,7 @@
         xmlns:views="clr-namespace:MessageRecord.Views"
         xmlns:ctl="clr-namespace:MessageRecord.Controls"
         x:Class="MessageRecord.Views.MainWindow"
+        Icon="avares://MessageRecord/Assets/MessageRecord.png"
         Title="MessageRecord · 通知訊息攔截紀錄"
         Width="1536" Height="1024"
         MinWidth="1280" MinHeight="760"
